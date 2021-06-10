@@ -1,1 +1,81 @@
-<h3>List view</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ToDo App</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap" rel="stylesheet">
+	<!-- CSS only -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+	<style type="text/css">
+		body {
+			background: #1329A8;
+			background: linear-gradient(90deg, #1329A8, #0AFA38);
+			font-family: 'Baloo Tammudu 2', cursive;
+		}
+
+		#task-container {
+			max-width: 600px;
+			margin: 100px auto;
+			box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+			background-color: #fff;
+			justify-content: space-around;
+			align-items: flex-start;
+		}
+
+		#form-wrapper {
+			position: sticky;
+			top: 0rem;
+			border-bottom: 1px solid #e9e9e9;
+			background-color: #fff;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+			padding: 40px;
+		}
+
+		#submit {
+			background-color: #36d9b6;
+			border-radius: 0;
+			border: 0;
+			color: #fff;
+		}
+
+		.flex-wrapper {
+			display: flex;
+		}
+
+		.task-wrapper {
+			margin: 5px;
+			padding: 5px;
+			padding: 20px;
+			cursor: pointer;
+			border-bottom: 1px solid #e9e9e9;
+			color: #686868;
+		}
+	</style>
+
+</head>
+<body>
+	<div class="container">
+		<div id="task-container">
+			<div id="form-wrapper">
+				<form id="form">
+					<div class="flex-wrapper">
+						<div style="flex: 6">
+							<input id="title" class="form-control" type="text" name="title" placeholder="Add task">
+						</div>
+						<div style="flex: 1">
+							<input type="submit" class="btn" id="submit">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="list-wrapper">
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
