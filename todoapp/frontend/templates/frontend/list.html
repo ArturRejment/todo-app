@@ -114,10 +114,16 @@
 				var list = data
 
 				for(var i in list){
+
+					var title = `<span class="title">${list[i].title}</span>`
+					if(list[i].completed) {
+						var title = `<strike class="title">${list[i].title}</strike>`
+					}
+
 					var item = `
 						<div id="data-row-${i}" class="task-wrapper flex-wrapper">
 							<div style="flex:7">
-								<span class="title">${list[i].title}</span>
+								${title}
 							</div>
 							<div style="flex:1">
 								<button class="btn btn-sm btn-outline-info edit">Edit </button>
@@ -132,9 +138,24 @@
 
 				for(var i in list) {
 					var editBtn = document.getElementsByClassName('edit')[i]
+					var deleteBtn = document.getElementsByClassName('delete')[i]
+					var strikeBtn = document.getElementsByClassName('task-wrapper')[i]
+
+					deleteBtn.addEventListener('click', (function(item){
+						return function(){
+							deleteItem(item)
+						}
+					})(list[i]))
+
 					editBtn.addEventListener('click', (function(item){
 						return function(){
 							editItem(item)
+						}
+					})(list[i]))
+
+					strikeBtn.addEventListener('click', (function(item){
+						return function(){
+							strikeUnstrike(item)
 						}
 					})(list[i]))
 				}
@@ -170,9 +191,45 @@
 		})
 
 		function editItem(item) {
-			console.log('Item clicked:', item)
 			activeItem = item
 			document.getElementById('title').value = activeItem.title
+		}
+
+		function deleteItem(item) {
+			var url = `http://127.0.0.1:8000/api/task-delete/${item.id}/`
+			
+			fetch(
+				url, {
+					method: 'DELETE',
+					headers: {
+						'Content-type':'application/json',
+						'X-CSRFToken': csrftoken
+					},
+				}
+				).then(function(response){
+					buildList()
+					document.getElementById('form').reset()
+				})
+			}
+			
+			function strikeUnstrike(item){
+			console.log('strike:', item)
+			
+			item.completed = !item.completed
+			var url = `http://127.0.0.1:8000/api/task-update/${item.id}/`
+			fetch(
+				url, {
+					method: 'POST',
+					headers: {
+						'Content-type':'application/json',
+						'X-CSRFToken': csrftoken
+					},
+					body: JSON.stringify({'title':item.title, 'completed': item.completed})
+				}
+			).then(function(response){
+				buildList()
+				document.getElementById('form').reset()
+			})
 		}
 	</script>
 </body>
