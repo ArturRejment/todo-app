@@ -98,6 +98,8 @@
 	}
 	const csrftoken = getCookie('csrftoken');
 
+	var activeItem = null;
+
 		buildList()
 
 		function buildList() {
@@ -127,6 +129,15 @@
 					`
 					wrapper.innerHTML += item // Add the rendered item to the wrapper section
 				}
+
+				for(var i in list) {
+					var editBtn = document.getElementsByClassName('edit')[i]
+					editBtn.addEventListener('click', (function(item){
+						return function(){
+							editItem(item)
+						}
+					})(list[i]))
+				}
 			})
 		}
 
@@ -136,6 +147,11 @@
 			e.preventDefault()
 			console.log("Form submitted")
 			var url = 'http://127.0.0.1:8000/api/task-create/'
+			
+			if(activeItem != null) {
+				var url = `http://127.0.0.1:8000/api/task-update/${activeItem.id}/`
+				activeItem = null
+			}
 			var title = document.getElementById('title').value
 
 			fetch(
@@ -149,8 +165,15 @@
 				}
 			).then(function(response){
 				buildList()
+				document.getElementById('form').reset()
 			})
 		})
+
+		function editItem(item) {
+			console.log('Item clicked:', item)
+			activeItem = item
+			document.getElementById('title').value = activeItem.title
+		}
 	</script>
 </body>
 </html>
