@@ -81,40 +81,46 @@
 
 	<script type="text/javascript">
 
-	function getCookie(name) {
-		let cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
 				}
 			}
+			return cookieValue;
 		}
-		return cookieValue;
-	}
-	const csrftoken = getCookie('csrftoken');
-
-	var activeItem = null;
+		const csrftoken = getCookie('csrftoken');
+		var activeItem = null;
+		var listSnapshot = []
 
 		buildList()
 
 		function buildList() {
 			var wrapper = document.getElementById('list-wrapper')
-			wrapper.innerHTML = '' // Clear wrapper before printing the list again
+			//wrapper.innerHTML = '' // Clear wrapper before printing the list again
+
 
 			var url = 'http://127.0.0.1:8000/api/task-list/'
 
 			fetch(url).then((resp) => resp.json()).then(function(data){
-				console.log('Data:', data)
 
 				var list = data
 
 				for(var i in list){
 
+					try{
+						document.getElementById(`data-row-${i}`).remove()
+					}
+					catch(error){
+
+					}
 					var title = `<span class="title">${list[i].title}</span>`
 					if(list[i].completed) {
 						var title = `<strike class="title">${list[i].title}</strike>`
@@ -136,10 +142,18 @@
 					wrapper.innerHTML += item // Add the rendered item to the wrapper section
 				}
 
+				if(listSnapshot.length > list.length) {
+					for(var i  = list.length; i < listSnapshot.length; i++){
+						document.getElementById(`data-row-${i}`).remove()
+					}
+				}
+
+				listSnapshot = list
+
 				for(var i in list) {
 					var editBtn = document.getElementsByClassName('edit')[i]
 					var deleteBtn = document.getElementsByClassName('delete')[i]
-					var strikeBtn = document.getElementsByClassName('task-wrapper')[i]
+					var strikeBtn = document.getElementsByClassName('title')[i]
 
 					deleteBtn.addEventListener('click', (function(item){
 						return function(){
@@ -166,9 +180,8 @@
 		// Making a post request to create the new task
 		form.addEventListener('submit', function(e){
 			e.preventDefault()
-			console.log("Form submitted")
 			var url = 'http://127.0.0.1:8000/api/task-create/'
-			
+
 			if(activeItem != null) {
 				var url = `http://127.0.0.1:8000/api/task-update/${activeItem.id}/`
 				activeItem = null
@@ -197,7 +210,7 @@
 
 		function deleteItem(item) {
 			var url = `http://127.0.0.1:8000/api/task-delete/${item.id}/`
-			
+
 			fetch(
 				url, {
 					method: 'DELETE',
@@ -211,10 +224,9 @@
 					document.getElementById('form').reset()
 				})
 			}
-			
+
 			function strikeUnstrike(item){
-			console.log('strike:', item)
-			
+
 			item.completed = !item.completed
 			var url = `http://127.0.0.1:8000/api/task-update/${item.id}/`
 			fetch(
